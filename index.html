@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Recolección de Datos - Centro de Atención</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function calcularResultados() {
+            const volumenLlamadas = parseInt(document.getElementById("volumen-llamadas").value) || 0;
+            const duracionPromedio = parseFloat(document.getElementById("duracion-promedio").value) || 0;
+            const tiempoEspera = parseInt(document.getElementById("tiempo-espera").value) || 0;
+
+            const tasaLlegadas = volumenLlamadas / (60 * 60); // Llamadas por segundo
+            const tasaServicio = 1 / (duracionPromedio * 60); // Servicios por segundo por operador
+
+            // Calcular número óptimo de operadores
+            let operadoresOptimos = Math.ceil(tasaLlegadas / tasaServicio);
+
+            let resultados = "";
+            resultados += `<p><strong>Tasa de Llegadas:</strong> ${tasaLlegadas.toFixed(4)} llamadas/segundo</p>`;
+            resultados += `<p><strong>Tasa de Servicio:</strong> ${tasaServicio.toFixed(4)} servicios/segundo por operador</p>`;
+            resultados += `<p><strong>Número Óptimo de Operadores:</strong> ${operadoresOptimos}</p>`;
+
+            document.getElementById("resultados").innerHTML = resultados;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Recolección de Datos</h1>
+        <form action="calculos.php" method="POST" onsubmit="calcularResultados(); return false;">
+            <div class="form-group">
+                <label for="volumen-llamadas">Volumen de Llamadas (por hora o día):</label>
+                <input type="number" id="volumen-llamadas" name="volumen-llamadas" placeholder="Ejemplo: 150 llamadas/día" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horarios-pico">Horarios Pico:</label>
+                <input type="text" id="horarios-pico" name="horarios-pico" placeholder="Ejemplo: 10:00 - 12:00 y 16:00 - 18:00" required>
+            </div>
+
+            <div class="form-group">
+                <label for="frecuencia-llamadas">Frecuencia de Llamadas:</label>
+                <input type="text" id="frecuencia-llamadas" name="frecuencia-llamadas" placeholder="Ejemplo: Cada 2 minutos" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duracion-promedio">Duración Promedio de la Llamada (en minutos):</label>
+                <input type="number" id="duracion-promedio" name="duracion-promedio" step="0.1" placeholder="Ejemplo: 5.5" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tiempo-espera">Tiempo Máximo de Espera Aceptable (en segundos):</label>
+                <input type="number" id="tiempo-espera" name="tiempo-espera" step="1" placeholder="Ejemplo: 30" required>
+            </div>
+
+            <div class="form-group">
+                <label for="porcentaje-sin-espera">Porcentaje de Llamadas Atendidas Sin Espera:</label>
+                <input type="number" id="porcentaje-sin-espera" name="porcentaje-sin-espera" step="0.1" placeholder="Ejemplo: 85.5" required>
+            </div>
+
+            <div class="form-group">
+                <label for="operadores-actuales">Número de Operadores Disponibles Actualmente:</label>
+                <input type="number" id="operadores-actuales" name="operadores-actuales" step="1" placeholder="Ejemplo: 10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tasa-abandono">Tasa de Abandono de Llamadas (porcentaje):</label>
+                <input type="number" id="tasa-abandono" name="tasa-abandono" step="0.1" placeholder="Ejemplo: 3.2">
+            </div>
+
+            <button type="submit">Calcular</button>
+        </form>
+        <div id="resultados" style="margin-top: 20px;"></div>
+    </div>
+</body>
+</html>
